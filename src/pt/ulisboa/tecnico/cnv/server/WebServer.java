@@ -88,6 +88,7 @@ public class WebServer {
 			// Get user-provided flags.
 			final SolverArgumentParser ap = new SolverArgumentParser(args);
 
+			// Adds the current request to the Metrics ConcurrentHashMap
 			serverMetrics.add(ap);
 
 			// Create solver instance from factory.

@@ -23,8 +23,10 @@ public class ServerMetrics {
         if (sm != null) sm.incrementMethodCount();
     }
 
-    public void sendMetricsToDynamoDB(Long threadId) {
+    public void sendMetricsToDynamoDB(String className, Long threadId) {
         //TODO
+        System.out.println(className + " invoking sendMetricsToDynamoDB");
+        System.out.println(threadMetrics.get(threadId));
     }
 
     public void add(SolverArgumentParser ap) {

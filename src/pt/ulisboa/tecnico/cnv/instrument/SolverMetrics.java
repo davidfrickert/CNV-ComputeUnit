@@ -7,11 +7,16 @@ import pt.ulisboa.tecnico.cnv.solver.SolverFactory;
  * Metrics for a thread
  */
 public class SolverMetrics {
+    // incremented every time a method is called on Solver class
     private int dynamicMethodCount;
+    // Solver Type (DLX, CP, BFS)
     private SolverFactory.SolverType solver;
+    // Unassigned Entries in Sudoku grid
     private int unassignedEntries;
+
     private int nColumns;
     private int nLines;
+    // Map Name (Example: SUDOKU_PUZZLE_9x9_104, SUDOKU_PUZZLE_16x16_01)
     private String mapName;
 
     public SolverMetrics(SolverFactory.SolverType solver, int unassignedEntries, int nColumns, int nLines, String mapName) {
