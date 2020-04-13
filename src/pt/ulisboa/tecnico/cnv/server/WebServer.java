@@ -97,6 +97,7 @@ public class WebServer {
 			//Solve sudoku puzzle
 			JSONArray solution = s.solveSudoku();
 
+			serverMetrics.sendMetricsToDynamoDB(Thread.currentThread().getId());
 
 			// Send response to browser.
 			final Headers hdrs = t.getResponseHeaders();

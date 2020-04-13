@@ -29,9 +29,9 @@ public class ServerMetrics {
         }
     }
 
-    public void sendMetricsToDynamoDB(String className, Long threadId) {
+    public void sendMetricsToDynamoDB(Long threadId) {
         //TODO
-        System.out.println(className + " invoking sendMetricsToDynamoDB");
+        System.out.println("printing result of this computation below");
         System.out.println(threadMetrics.get(threadId));
     }
 

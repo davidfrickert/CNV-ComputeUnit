@@ -47,16 +47,12 @@ public class Instrumentor {
             Routine routine = (Routine) e.nextElement();
             routine.addBefore(CLASS_NAME, "incrementMethodCount", classInfo.getClassName());
         }
-        classInfo.addAfter(CLASS_NAME, "sendMetrics", classInfo.getClassName());
+        //classInfo.addAfter(CLASS_NAME, "sendMetrics", classInfo.getClassName());
         classInfo.write(path);
     }
 
     public static void incrementMethodCount(String className) {
         ServerMetrics.getInstance().increment(className, Thread.currentThread().getId());
-    }
-
-    public static void sendMetrics(String className) {
-        ServerMetrics.getInstance().sendMetricsToDynamoDB(className, Thread.currentThread().getId());
     }
 
     public static String extractMainClassName(ClassInfo classInfo) {
