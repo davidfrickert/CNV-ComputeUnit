@@ -1,1 +1,1 @@
-java pt.ulisboa.tecnico.cnv.server.WebServer
+java -XX:-UseSplitVerifier pt.ulisboa.tecnico.cnv.server.WebServer
