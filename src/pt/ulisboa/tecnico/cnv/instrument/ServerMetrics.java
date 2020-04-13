@@ -18,9 +18,15 @@ public class ServerMetrics {
         return INSTANCE;
     }
 
-    public void increment(Long threadId) {
+    public void increment(String className, Long threadId) {
+        System.out.println(className + " invoking increment");
         SolverMetrics sm = threadMetrics.get(threadId);
-        if (sm != null) sm.incrementMethodCount();
+        if (sm != null) {
+            sm.incrementMethodCount();
+            System.out.println(sm.getDynamicMethodCount() + " method calls.");
+        } else {
+            System.out.println("attempt to increment thread not in HashMap. ThreadId=" + threadId);
+        }
     }
 
     public void sendMetricsToDynamoDB(String className, Long threadId) {
