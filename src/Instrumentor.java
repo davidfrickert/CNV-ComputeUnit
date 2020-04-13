@@ -45,14 +45,14 @@ public class Instrumentor {
         ClassInfo classInfo = new ClassInfo(path);
         for (Enumeration<?> e = classInfo.getRoutines().elements(); e.hasMoreElements(); ) {
             Routine routine = (Routine) e.nextElement();
-            routine.addBefore(CLASS_NAME, "incrementMethodCount", "null");
+            routine.addBefore(CLASS_NAME, "incrementMethodCount", classInfo.getClassName());
         }
         classInfo.addAfter(CLASS_NAME, "sendMetrics", classInfo.getClassName());
         classInfo.write(path);
     }
 
-    public static void incrementMethodCount(String placeholder) {
-        ServerMetrics.getInstance().increment(Thread.currentThread().getId());
+    public static void incrementMethodCount(String className) {
+        ServerMetrics.getInstance().increment(className, Thread.currentThread().getId());
     }
 
     public static void sendMetrics(String className) {
