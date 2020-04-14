@@ -1,5 +1,4 @@
-import BIT.highBIT.ClassInfo;
-import BIT.highBIT.Routine;
+import BIT.highBIT.*;
 import pt.ulisboa.tecnico.cnv.instrument.ServerMetrics;
 
 import java.io.File;
@@ -39,6 +38,7 @@ public class Instrumentor {
     public static void instrument(File classFile) {
         String fileName = classFile.getAbsolutePath();
         dynamicInstrument(fileName);
+        allocationInstrument(fileName);
     }
 
     public static void dynamicInstrument(String path) {
@@ -51,8 +51,36 @@ public class Instrumentor {
         classInfo.write(path);
     }
 
-    public static void incrementMethodCount(String className) {
+    public static void allocationInstrument(String path)
+    {
+        ClassInfo classInfo = new ClassInfo(path);
+
+
+        for (Enumeration<?> e = classInfo.getRoutines().elements(); e.hasMoreElements(); ) {
+            Routine routine = (Routine) e.nextElement();
+            InstructionArray instructions = routine.getInstructionArray();
+
+            for (Enumeration<?> instrs = instructions.elements(); instrs.hasMoreElements(); ) {
+                Instruction instr = (Instruction) instrs.nextElement();
+                int opcode=instr.getOpcode();
+                if ((opcode== InstructionTable.NEW) ||
+                        (opcode==InstructionTable.newarray) ||
+                        (opcode==InstructionTable.anewarray) ||
+                        (opcode==InstructionTable.multianewarray)) {
+                    instr.addBefore(CLASS_NAME, "incrementAllocCount", opcode);
+                }
+            }
+        }
+        classInfo.write(path);
+
+    }
+
+    public static synchronized void incrementMethodCount(String className) {
         ServerMetrics.getInstance().increment(className, Thread.currentThread().getId());
+    }
+
+    public static synchronized void incrementAllocCount(int opcode) {
+        ServerMetrics.getInstance().incrementAllocCount(Thread.currentThread().getId(), opcode);
     }
 
     public static String extractMainClassName(ClassInfo classInfo) {

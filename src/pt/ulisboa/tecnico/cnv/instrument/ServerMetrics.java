@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.cnv.instrument;
 
+import BIT.highBIT.InstructionTable;
+import com.amazonaws.services.dynamodbv2.document.DynamoDB;
 import pt.ulisboa.tecnico.cnv.solver.SolverArgumentParser;
 
 import java.util.Map;
@@ -27,6 +29,29 @@ public class ServerMetrics {
         } else {
             System.out.println("attempt to increment thread not in HashMap. ThreadId=" + threadId);
         }
+    }
+
+    public void incrementAllocCount(Long threadId, int opcode) {
+        SolverMetrics sm = threadMetrics.get(threadId);
+        if (sm != null) {
+            switch (opcode) {
+                case InstructionTable.NEW:
+                    sm.incrementNewObjectCount();
+                    break;
+                case InstructionTable.newarray:
+                    sm.incrementNewArrayCount();
+                    break;
+                case InstructionTable.anewarray:
+                    sm.incrementNewReferenceArrayCount();
+                    break;
+                case InstructionTable.multianewarray:
+                    sm.incrementNewMultiDimArrayCount();
+                    break;
+            }
+        } else {
+            System.out.println("attempt to increment thread not in HashMap. ThreadId=" + threadId);
+        }
+
     }
 
     public void sendMetricsToDynamoDB(Long threadId) {

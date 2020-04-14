@@ -9,6 +9,15 @@ import pt.ulisboa.tecnico.cnv.solver.SolverFactory;
 public class SolverMetrics {
     // incremented every time a method is called on Solver class
     private int dynamicMethodCount;
+    // count of "newarray" operations - single dimension array of primitive types
+    private int newArrayCount;
+    // count of "anewarray" operations - single dimension array of reference types
+    private int newReferenceArrayCount;
+    // count of "multianewarray" - multi dimensional array of reference types
+    private int newMultiDimensionalArrayCount;
+    // count of "new" - new objects
+    private int newObjectCount;
+
     // Solver Type (DLX, CP, BFS)
     private SolverFactory.SolverType solver;
     // Unassigned Entries in Sudoku grid
@@ -40,6 +49,20 @@ public class SolverMetrics {
     public void incrementMethodCount() {
         dynamicMethodCount++;
     }
+    public void incrementNewArrayCount() {
+        newArrayCount++;
+    }
+    public void incrementNewReferenceArrayCount() {
+        newReferenceArrayCount++;
+    }
+    public void incrementNewMultiDimArrayCount() {
+        newMultiDimensionalArrayCount++;
+    }
+    public void incrementNewObjectCount() {
+        newObjectCount++;
+    }
+
+
 
     public int getDynamicMethodCount() {
         return dynamicMethodCount;
@@ -76,7 +99,6 @@ public class SolverMetrics {
         this.nLines = ap.getN2();
         this.mapName = ap.getInputBoard();
     }
-
 
     @Override
     public String toString() {
