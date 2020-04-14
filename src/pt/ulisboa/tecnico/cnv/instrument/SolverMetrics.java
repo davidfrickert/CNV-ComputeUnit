@@ -100,10 +100,15 @@ public class SolverMetrics {
         this.mapName = ap.getInputBoard();
     }
 
+
     @Override
     public String toString() {
         return "SolverMetrics{" +
                 "dynamicMethodCount=" + dynamicMethodCount +
+                ", newArrayCount=" + newArrayCount +
+                ", newReferenceArrayCount=" + newReferenceArrayCount +
+                ", newMultiDimensionalArrayCount=" + newMultiDimensionalArrayCount +
+                ", newObjectCount=" + newObjectCount +
                 ", solver=" + solver +
                 ", unassignedEntries=" + unassignedEntries +
                 ", nColumns=" + nColumns +
