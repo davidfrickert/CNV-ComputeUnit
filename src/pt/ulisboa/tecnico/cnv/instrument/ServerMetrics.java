@@ -116,7 +116,7 @@ public class ServerMetrics {
         TableUtils.waitUntilActive(dynamoDB, tableName);
 
         SolverMetrics tmp = threadMetrics.get(threadId);
-        Map<Long, AttributeValue> item = newItem(threadId, tmp.getDynamicMethodCount(), tmp.getNewArrayCount(), tmp.getNewReferenceArrayCount(), tmp.getNewMultiReferenceCount(), tmp.getNewObjectCount());
+        Map<Long, AttributeValue> item = newItem(threadId, tmp.getDynamicMethodCount(), tmp.getNewArrayCount(), tmp.getNewReferenceArrayCount(), tmp.getNewMultiDimensionalArrayCount(), tmp.getNewObjectCount());
 
         //Map<String, AttributeValue> item = newItem(threadId, 1,1,1,1,1); //worked
 	    
