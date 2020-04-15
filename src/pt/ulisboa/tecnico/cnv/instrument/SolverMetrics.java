@@ -62,10 +62,24 @@ public class SolverMetrics {
         newObjectCount++;
     }
 
-
-
     public int getDynamicMethodCount() {
         return dynamicMethodCount;
+    }
+    
+    public int getNewArrayCount(){
+        return newArrayCount;   
+    }
+    
+    public int getNewReferenceArrayCount(){
+        return newReferenceArrayCount;   
+    }
+    
+    public int getNewMultiDimensionalArrayCount(){
+        return newMultiDimensionalArrayCount;   
+    }
+    
+    public int getNewObjectCount(){
+        return newObjectCount;   
     }
 
     public SolverFactory.SolverType getSolver() {
