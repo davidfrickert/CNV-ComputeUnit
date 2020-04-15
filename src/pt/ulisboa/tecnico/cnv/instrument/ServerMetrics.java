@@ -68,7 +68,7 @@ public class ServerMetrics {
     }
 
     public void increment(String className, Long threadId) {
-        System.out.println(className + " invoking increment");
+        //System.out.println(className + " invoking increment");
         SolverMetrics sm = threadMetrics.get(threadId);
         if (sm != null) {
             sm.incrementMethodCount();
@@ -103,7 +103,6 @@ public class ServerMetrics {
 
     public boolean sendMetricsToDynamoDB(Long threadId) {
         String tableName = "Server-metrics";
-
         // Create a table with a primary hash key named 'name', which holds a string
         CreateTableRequest createTableRequest = new CreateTableRequest().withTableName(tableName)
             .withKeySchema(new KeySchemaElement().withAttributeName("Thread-id").withKeyType(KeyType.HASH))
@@ -121,15 +120,15 @@ public class ServerMetrics {
         }
 
         SolverMetrics tmp = threadMetrics.get(threadId);
+        System.out.println("Sending results to dynamodDB: " + tmp);
         Map<String, AttributeValue> item = newItem(threadId, tmp.getDynamicMethodCount(), tmp.getNewArrayCount(), tmp.getNewReferenceArrayCount(), tmp.getNewMultiDimensionalArrayCount(), tmp.getNewObjectCount());
 
         //Map<String, AttributeValue> item = newItem(threadId, 1,1,1,1,1); //worked
 	    
         PutItemRequest putItemRequest = new PutItemRequest(tableName, item);
         PutItemResult putItemResult = dynamoDB.putItem(putItemRequest);
+        System.out.println("Response from aws: " + putItemResult);
         
-        //System.out.println("printing result of this computation below");
-        //System.out.println(threadMetrics.get(threadId));
         return true;
     }
     
@@ -147,6 +146,8 @@ public class ServerMetrics {
 
 
     public void add(SolverArgumentParser ap) {
-        threadMetrics.put(Thread.currentThread().getId(), SolverMetrics.fromParser(ap));
+        SolverMetrics sm = SolverMetrics.fromParser(ap);
+        System.out.println("Starting : " + sm);
+        threadMetrics.put(Thread.currentThread().getId(), sm);
     }
 }
