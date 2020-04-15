@@ -24,6 +24,7 @@ import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
 
 import pt.ulisboa.tecnico.cnv.solver.SolverArgumentParser;
+import sun.org.mozilla.javascript.internal.EcmaError;
 
 import java.util.Map;
 import java.util.HashMap;
@@ -102,36 +103,41 @@ public class ServerMetrics {
     }
 
     public boolean sendMetricsToDynamoDB(Long threadId) {
-        System.out.println("Sending to dynamoDB");
-        String tableName = "Server-metrics";
-        // Create a table with a primary hash key named 'name', which holds a string
-        CreateTableRequest createTableRequest = new CreateTableRequest().withTableName(tableName)
-            .withKeySchema(new KeySchemaElement().withAttributeName("Thread-id").withKeyType(KeyType.HASH))
-            .withAttributeDefinitions(new AttributeDefinition().withAttributeName("Thread-id").withAttributeType(ScalarAttributeType.S))
-            .withProvisionedThroughput(new ProvisionedThroughput().withReadCapacityUnits(1L).withWriteCapacityUnits(1L));
-
-        // Create table if it does not exist yet
-        TableUtils.createTableIfNotExists(dynamoDB, createTableRequest);
-        // wait for the table to move into ACTIVE state
         try {
-            TableUtils.waitUntilActive(dynamoDB, tableName);
-        } catch (InterruptedException exc) {
-            exc.printStackTrace();
-            System.out.println("Table exists and is active");
+            System.out.println("Sending to dynamoDB");
+            String tableName = "Server-metrics";
+            // Create a table with a primary hash key named 'name', which holds a string
+            CreateTableRequest createTableRequest = new CreateTableRequest().withTableName(tableName)
+                    .withKeySchema(new KeySchemaElement().withAttributeName("Thread-id").withKeyType(KeyType.HASH))
+                    .withAttributeDefinitions(new AttributeDefinition().withAttributeName("Thread-id").withAttributeType(ScalarAttributeType.S))
+                    .withProvisionedThroughput(new ProvisionedThroughput().withReadCapacityUnits(1L).withWriteCapacityUnits(1L));
+
+            // Create table if it does not exist yet
+            TableUtils.createTableIfNotExists(dynamoDB, createTableRequest);
+            // wait for the table to move into ACTIVE state
+            try {
+                TableUtils.waitUntilActive(dynamoDB, tableName);
+            } catch (InterruptedException exc) {
+                exc.printStackTrace();
+                System.out.println("Table exists and is active");
+                return false;
+            }
+
+            SolverMetrics tmp = threadMetrics.get(threadId);
+            System.out.println("Sending" + tmp);
+            Map<String, AttributeValue> item = newItem(threadId, tmp.getDynamicMethodCount(), tmp.getNewArrayCount(), tmp.getNewReferenceArrayCount(), tmp.getNewMultiDimensionalArrayCount(), tmp.getNewObjectCount());
+
+            //Map<String, AttributeValue> item = newItem(threadId, 1,1,1,1,1); //worked
+
+            PutItemRequest putItemRequest = new PutItemRequest(tableName, item);
+            PutItemResult putItemResult = dynamoDB.putItem(putItemRequest);
+            System.out.println("Response from aws: " + putItemResult);
+
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
-
-        SolverMetrics tmp = threadMetrics.get(threadId);
-        System.out.println("Sending" + tmp);
-        Map<String, AttributeValue> item = newItem(threadId, tmp.getDynamicMethodCount(), tmp.getNewArrayCount(), tmp.getNewReferenceArrayCount(), tmp.getNewMultiDimensionalArrayCount(), tmp.getNewObjectCount());
-
-        //Map<String, AttributeValue> item = newItem(threadId, 1,1,1,1,1); //worked
-	    
-        PutItemRequest putItemRequest = new PutItemRequest(tableName, item);
-        PutItemResult putItemResult = dynamoDB.putItem(putItemRequest);
-        System.out.println("Response from aws: " + putItemResult);
-        
-        return true;
     }
     
     private static Map<String, AttributeValue> newItem(Long threadId, int dynamicMethodCouter, int newArrayCount, int newReferenceArrayCount, int newMultiReferenceCount, int newObjectCount) {
