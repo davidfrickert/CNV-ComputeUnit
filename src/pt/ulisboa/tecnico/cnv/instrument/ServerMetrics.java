@@ -147,7 +147,6 @@ public class ServerMetrics {
 
     public void add(SolverArgumentParser ap) {
         SolverMetrics sm = SolverMetrics.fromParser(ap);
-        System.out.println("Starting : " + sm);
         threadMetrics.put(Thread.currentThread().getId(), sm);
     }
 }
