@@ -24,7 +24,6 @@ import com.amazonaws.services.dynamodbv2.util.TableUtils;
 import com.amazonaws.services.dynamodbv2.model.TableDescription;
 
 import pt.ulisboa.tecnico.cnv.solver.SolverArgumentParser;
-import sun.org.mozilla.javascript.internal.EcmaError;
 
 import java.util.Map;
 import java.util.HashMap;
