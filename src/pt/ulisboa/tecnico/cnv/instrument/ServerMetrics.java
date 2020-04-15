@@ -72,7 +72,7 @@ public class ServerMetrics {
         SolverMetrics sm = threadMetrics.get(threadId);
         if (sm != null) {
             sm.incrementMethodCount();
-            System.out.println(sm.getDynamicMethodCount() + " method calls.");
+            //System.out.println(sm.getDynamicMethodCount() + " method calls.");
         } else {
             System.out.println("attempt to increment thread not in HashMap. ThreadId=" + threadId);
         }
