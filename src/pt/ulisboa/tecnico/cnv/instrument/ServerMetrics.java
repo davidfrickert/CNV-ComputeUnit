@@ -33,7 +33,7 @@ public class ServerMetrics {
     private Map<Long, SolverMetrics> threadMetrics = new ConcurrentHashMap<>();
     private AmazonDynamoDB dynamoDB;
 
-    private void init() throws Exception {
+    private void init() {
         ProfileCredentialsProvider credentialsProvider = new ProfileCredentialsProvider();
     
         try {
@@ -101,7 +101,7 @@ public class ServerMetrics {
 
     }
 
-    public void sendMetricsToDynamoDB(Long threadId) {
+    public boolean sendMetricsToDynamoDB(Long threadId) {
         String tableName = "Server-metrics";
 
         // Create a table with a primary hash key named 'name', which holds a string
@@ -113,7 +113,12 @@ public class ServerMetrics {
         // Create table if it does not exist yet
         TableUtils.createTableIfNotExists(dynamoDB, createTableRequest);
         // wait for the table to move into ACTIVE state
-        TableUtils.waitUntilActive(dynamoDB, tableName);
+        try {
+            TableUtils.waitUntilActive(dynamoDB, tableName);
+        } catch (InterruptedException exc) {
+            exc.printStackTrace();
+            return false;
+        }
 
         SolverMetrics tmp = threadMetrics.get(threadId);
         Map<String, AttributeValue> item = newItem(threadId, tmp.getDynamicMethodCount(), tmp.getNewArrayCount(), tmp.getNewReferenceArrayCount(), tmp.getNewMultiDimensionalArrayCount(), tmp.getNewObjectCount());
@@ -125,6 +130,7 @@ public class ServerMetrics {
         
         //System.out.println("printing result of this computation below");
         //System.out.println(threadMetrics.get(threadId));
+        return true;
     }
     
     private static Map<String, AttributeValue> newItem(Long threadId, int dynamicMethodCouter, int newArrayCount, int newReferenceArrayCount, int newMultiReferenceCount, int newObjectCount) {
