@@ -26,13 +26,14 @@ import com.amazonaws.services.dynamodbv2.model.TableDescription;
 import pt.ulisboa.tecnico.cnv.solver.SolverArgumentParser;
 
 import java.util.Map;
+import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ServerMetrics {
     private Map<Long, SolverMetrics> threadMetrics = new ConcurrentHashMap<>();
     private AmazonDynamoDB dynamoDB;
 
-    private static void init() throws Exception {
+    private void init() throws Exception {
         ProfileCredentialsProvider credentialsProvider = new ProfileCredentialsProvider();
     
         try {
