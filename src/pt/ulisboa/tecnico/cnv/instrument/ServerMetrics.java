@@ -107,8 +107,8 @@ public class ServerMetrics {
             String tableName = "Server-metrics";
             // Create a table with a primary hash key named 'name', which holds a string
             CreateTableRequest createTableRequest = new CreateTableRequest().withTableName(tableName)
-                    .withKeySchema(new KeySchemaElement().withAttributeName("Thread-id").withKeyType(KeyType.HASH))
-                    .withAttributeDefinitions(new AttributeDefinition().withAttributeName("Thread-id").withAttributeType(ScalarAttributeType.S))
+                    .withKeySchema(new KeySchemaElement().withAttributeName("id").withKeyType(KeyType.HASH))
+                    .withAttributeDefinitions(new AttributeDefinition().withAttributeName("id").withAttributeType(ScalarAttributeType.S))
                     .withProvisionedThroughput(new ProvisionedThroughput().withReadCapacityUnits(1L).withWriteCapacityUnits(1L));
 
             // Create table if it does not exist yet
@@ -121,12 +121,16 @@ public class ServerMetrics {
                 System.out.println("Table exists and is active");
                 return false;
             }
-
-            SolverMetrics tmp = threadMetrics.get(threadId);
-            System.out.println("Sending" + tmp);
-            Map<String, AttributeValue> item = newItem(threadId, tmp.getDynamicMethodCount(), tmp.getNewArrayCount(), tmp.getNewReferenceArrayCount(), tmp.getNewMultiDimensionalArrayCount(), tmp.getNewObjectCount());
-
-            //Map<String, AttributeValue> item = newItem(threadId, 1,1,1,1,1); //worked
+            
+            //temporary solution
+            HashMap<String, Condition> scanFilter = new HashMap<String, Condition>();
+            ScanRequest scanRequest = new ScanRequest(tableName);
+            ScanResult scanResult = dynamoDB.scan(scanRequest);
+            int id = scanResult.getCount();
+            
+            SolverMetrics metrics = threadMetrics.get(threadId);
+            System.out.println("Sending" + metrics);
+            Map<String, AttributeValue> item = newItem(++id, threadId, metrics);//, tmp.getDynamicMethodCount(), tmp.getNewArrayCount(), tmp.getNewReferenceArrayCount(), tmp.getNewMultiDimensionalArrayCount(), tmp.getNewObjectCount());
 
             PutItemRequest putItemRequest = new PutItemRequest(tableName, item);
             PutItemResult putItemResult = dynamoDB.putItem(putItemRequest);
@@ -139,14 +143,18 @@ public class ServerMetrics {
         }
     }
     
-    private static Map<String, AttributeValue> newItem(Long threadId, int dynamicMethodCouter, int newArrayCount, int newReferenceArrayCount, int newMultiReferenceCount, int newObjectCount) {
+    private static Map<String, AttributeValue> newItem(int id, Long threadId, SolverMetrics metrics){//, Long threadId, String columns, String rows, String entries, int dynamicMethodCouter, int newArrayCount, int newReferenceArrayCount, int newMultiReferenceCount, int newObjectCount) {
         Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
-        item.put("Thread-id", new AttributeValue(String.valueOf(threadId)));
-        item.put("Method-counter", new AttributeValue().withN(Integer.toString(dynamicMethodCouter)));
-        item.put("New-Array-counter", new AttributeValue().withN(Integer.toString(newArrayCount)));
-        item.put("New-Reference-Array-counter", new AttributeValue().withN(Integer.toString(newReferenceArrayCount)));
-        item.put("New-Multi-Reference-counter", new AttributeValue().withN(Integer.toString(newMultiReferenceCount)));
-        item.put("New-Object-counter", new AttributeValue().withN(Integer.toString(newObjectCount)));
+        item.put("id", new AttributeValue(String.valueOf(id)));
+        item.put("Thread-id", new AttributeValue().withN(String.valueOf(threadId)));
+        item.put("Columns", new AttributeValue().withN(String.valueOf(metrics.getnColumns())));
+        item.put("Lines", new AttributeValue().withN(String.valueOf(metrics.getnLines())));
+        item.put("Unassigned-Entries", new AttributeValue(metrics.getUnassignedEntries()));
+        item.put("Method-counter", new AttributeValue().withN(String.valueOf(metrics.getDynamicMethodCount())));
+        item.put("New-Array-counter", new AttributeValue().withN(String.valueOf(metrics.getNewArrayCount())));
+        item.put("New-Reference-Array-counter", new AttributeValue().withN(String.valueOf(metrics.getNewReferenceArrayCount())));
+        item.put("New-Multi-Reference-counter", new AttributeValue().withN(String.valueOf(metrics.getNewMultiDimensionalArrayCount())));
+        item.put("New-Object-counter", new AttributeValue().withN(String.valueOf(metrics.getNewObjectCount())));
 
         return item;
     }
