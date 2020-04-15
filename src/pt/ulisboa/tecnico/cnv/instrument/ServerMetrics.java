@@ -102,6 +102,7 @@ public class ServerMetrics {
     }
 
     public boolean sendMetricsToDynamoDB(Long threadId) {
+        System.out.println("Sending to dynamoDB");
         String tableName = "Server-metrics";
         // Create a table with a primary hash key named 'name', which holds a string
         CreateTableRequest createTableRequest = new CreateTableRequest().withTableName(tableName)
@@ -116,11 +117,12 @@ public class ServerMetrics {
             TableUtils.waitUntilActive(dynamoDB, tableName);
         } catch (InterruptedException exc) {
             exc.printStackTrace();
+            System.out.println("Table exists and is active");
             return false;
         }
 
         SolverMetrics tmp = threadMetrics.get(threadId);
-        System.out.println("Sending results to dynamodDB: " + tmp);
+        System.out.println("Sending" + tmp);
         Map<String, AttributeValue> item = newItem(threadId, tmp.getDynamicMethodCount(), tmp.getNewArrayCount(), tmp.getNewReferenceArrayCount(), tmp.getNewMultiDimensionalArrayCount(), tmp.getNewObjectCount());
 
         //Map<String, AttributeValue> item = newItem(threadId, 1,1,1,1,1); //worked
