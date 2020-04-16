@@ -1,4 +1,4 @@
-. source-this-before-compiling.sh
+. classpath.sh
 echo "compiling Instrumentor.java"
 javac Instrumentor.java
 echo "compiling solvers"
