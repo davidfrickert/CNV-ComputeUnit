@@ -11,18 +11,8 @@ import com.amazonaws.regions.Region;
 import com.amazonaws.regions.Regions;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDB;
 import com.amazonaws.services.dynamodbv2.AmazonDynamoDBClientBuilder;
-import com.amazonaws.services.dynamodbv2.model.AttributeDefinition;
-import com.amazonaws.services.dynamodbv2.model.AttributeValue;
-import com.amazonaws.services.dynamodbv2.model.CreateTableRequest;
-import com.amazonaws.services.dynamodbv2.model.DescribeTableRequest;
-import com.amazonaws.services.dynamodbv2.model.KeySchemaElement;
-import com.amazonaws.services.dynamodbv2.model.KeyType;
-import com.amazonaws.services.dynamodbv2.model.ProvisionedThroughput;
-import com.amazonaws.services.dynamodbv2.model.PutItemRequest;
-import com.amazonaws.services.dynamodbv2.model.PutItemResult;
-import com.amazonaws.services.dynamodbv2.model.ScalarAttributeType;
+import com.amazonaws.services.dynamodbv2.model.*;
 import com.amazonaws.services.dynamodbv2.util.TableUtils;
-import com.amazonaws.services.dynamodbv2.model.TableDescription;
 
 import pt.ulisboa.tecnico.cnv.solver.SolverArgumentParser;
 
@@ -151,7 +141,7 @@ public class ServerMetrics {
         item.put("Thread-id", new AttributeValue().withN(String.valueOf(threadId)));
         item.put("Columns", new AttributeValue().withN(String.valueOf(metrics.getnColumns())));
         item.put("Lines", new AttributeValue().withN(String.valueOf(metrics.getnLines())));
-        item.put("Unassigned-Entries", new AttributeValue(metrics.getUnassignedEntries()));
+        item.put("Unassigned-Entries", new AttributeValue().withN(String.valueOf(metrics.getUnassignedEntries())));
         item.put("Method-counter", new AttributeValue().withN(String.valueOf(metrics.getDynamicMethodCount())));
         item.put("New-Array-counter", new AttributeValue().withN(String.valueOf(metrics.getNewArrayCount())));
         item.put("New-Reference-Array-counter", new AttributeValue().withN(String.valueOf(metrics.getNewReferenceArrayCount())));
