@@ -4,6 +4,7 @@ import BIT.highBIT.InstructionTable;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
+import com.amazonaws.SdkBaseException;
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.profile.ProfileCredentialsProvider;
 import com.amazonaws.regions.Region;
@@ -137,7 +138,8 @@ public class ServerMetrics {
             System.out.println("Response from aws: " + putItemResult);
 
             return true;
-        } catch (Exception e) {
+        } catch (SdkBaseException e) {
+            System.out.println("Problem with AWS SDK, stack trace below:");
             e.printStackTrace();
             return false;
         }
