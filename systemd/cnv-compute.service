@@ -1,0 +1,20 @@
+## 
+# systemd service to start server on boot
+# put on /etc/systemd/system
+# then 'systemctl enable cnv-compute --now'
+# as root
+# the service will be enabled to run on boot
+# and also start if the flag '--now' is provided
+##
+[Unit]
+Description=CNV Compute Unit WebServer
+Wants=network-online.target
+After=network-online.target
+[Service]
+WorkingDirectory=/home/ec2-user/CNV-ComputeUnit/src
+ExecStart=/bin/bash /home/ec2-user/CNV-ComputeUnit/src/run-server.sh
+Restart=on-failure
+RestartSec=10
+User=ec2-user
+[Install]
+WantedBy=multi-user.target
