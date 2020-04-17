@@ -27,7 +27,6 @@ public class Instrumentor {
                 File[] classes = f.listFiles(new FilenameFilter() {
                     @Override
                     public boolean accept(File dir, String name) {
-                        System.out.println("@accept - checking if " + name + " is in " + exclusionsList);
                         return name.toLowerCase().endsWith(".class") && !(exclusionsList.contains(name));
                     }
                 });
