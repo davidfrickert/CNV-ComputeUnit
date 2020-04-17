@@ -3,7 +3,10 @@ import pt.ulisboa.tecnico.cnv.instrument.ServerMetrics;
 
 import java.io.File;
 import java.io.FilenameFilter;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Enumeration;
+import java.util.List;
 
 public class Instrumentor {
 
@@ -15,24 +18,31 @@ public class Instrumentor {
 
 
     public static void main(String[] args) {
-        if (args.length != 1) System.out.println("Usage: java Instrumentor <directory of .class files to instrument>");
+        if (args.length < 1) System.out.println("Usage: java Instrumentor <directory of .class files to instrument> <exclusions>");
         else {
             String path = args[0];
             File f = new File(path);
             if (f.isDirectory()) {
+                final List<String> exclusionsList = buildExclusionList(args);
                 File[] classes = f.listFiles(new FilenameFilter() {
                     @Override
                     public boolean accept(File dir, String name) {
-                        return name.toLowerCase().endsWith(".class");
+                        return name.toLowerCase().endsWith(".class") && !(exclusionsList.contains(name));
                     }
                 });
                 for (File classFile : classes) {
+                    System.out.println("Instrumenting " + classFile.getName());
                     instrument(classFile);
                 }
             } else {
                 System.out.println("You didn't supply a directory. Nothing done.");
                 System.out.println("Usage: java Instrumentor <directory of .class files to instrument>");}
         }
+    }
+
+    private static List<String> buildExclusionList(String[] args) {
+        if (args.length > 1) return Arrays.asList(Arrays.copyOfRange(args, 1, args.length));
+        else return new ArrayList<>();
     }
 
     public static void instrument(File classFile) {
