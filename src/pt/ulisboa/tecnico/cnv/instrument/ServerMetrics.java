@@ -114,14 +114,20 @@ public class ServerMetrics {
             }
             
             //temporary solution
-            HashMap<String, Condition> scanFilter = new HashMap<String, Condition>();
             ScanRequest scanRequest = new ScanRequest(tableName);
             ScanResult scanResult = dynamoDB.scan(scanRequest);
-            int id = scanResult.getCount();
+            String id = "0";
+            for (Map<String, AttributeValue> e : scanResult.getItems()) {
+                //System.out.println(e.get("id").getS());
+                if(e.get("id").getS().compareTo(id) > 0){
+                    id = e.get("id").getS();
+                }
+            }
+            int futureId = Integer.parseInt(id) + 1;
             
             SolverMetrics metrics = threadMetrics.get(threadId);
             System.out.println("Sending" + metrics);
-            Map<String, AttributeValue> item = newItem(++id, threadId, metrics);//, tmp.getDynamicMethodCount(), tmp.getNewArrayCount(), tmp.getNewReferenceArrayCount(), tmp.getNewMultiDimensionalArrayCount(), tmp.getNewObjectCount());
+            Map<String, AttributeValue> item = newItem(futureId, threadId, metrics);//, tmp.getDynamicMethodCount(), tmp.getNewArrayCount(), tmp.getNewReferenceArrayCount(), tmp.getNewMultiDimensionalArrayCount(), tmp.getNewObjectCount());
 
             PutItemRequest putItemRequest = new PutItemRequest(tableName, item);
             PutItemResult putItemResult = dynamoDB.putItem(putItemRequest);
