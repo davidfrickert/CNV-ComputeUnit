@@ -134,7 +134,7 @@ public class ServerMetrics {
             System.out.println("Response from aws: " + putItemResult);
 
             return true;
-        } catch (SdkBaseException e) {
+        } catch (Exception e) {
             System.out.println("Problem with AWS SDK, stack trace below:");
             e.printStackTrace();
             return false;
