@@ -59,7 +59,7 @@ public class ServerMetrics {
     }
 
     public void increment(String className, Long threadId) {
-        //System.out.println(className + " invoking increment");
+        System.out.println(className + " invoking increment");
         SolverMetrics sm = threadMetrics.get(threadId);
         if (sm != null) {
             sm.incrementMethodCount();
