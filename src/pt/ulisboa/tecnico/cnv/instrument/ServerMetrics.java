@@ -129,12 +129,9 @@ public class ServerMetrics {
         }
     }
     
-    private static Map<String, AttributeValue> newItem(int id, SolverMetrics metrics){//, Long threadId, String columns, String rows, String entries, int dynamicMethodCouter, int newArrayCount, int newReferenceArrayCount, int newMultiReferenceCount, int newObjectCount) {
-    private static Map<String, AttributeValue> newItem(long timeStamp, Long threadId, SolverMetrics metrics){
+    private static Map<String, AttributeValue> newItem(long timeStamp, SolverMetrics metrics){
         Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
-        item.put("id", new AttributeValue(String.valueOf(id)));
         item.put("id", new AttributeValue(String.valueOf(timeStamp)));
-        item.put("Thread-id", new AttributeValue().withN(String.valueOf(threadId)));
         item.put("Columns", new AttributeValue().withN(String.valueOf(metrics.getnColumns())));
         item.put("Lines", new AttributeValue().withN(String.valueOf(metrics.getnLines())));
         item.put("Solver-Type", new AttributeValue(String.valueOf(metrics.getSolver().toString())));
