@@ -127,7 +127,7 @@ public class ServerMetrics {
             
             SolverMetrics metrics = threadMetrics.get(threadId);
             System.out.println("Sending" + metrics);
-            Map<String, AttributeValue> item = newItem(futureId, threadId, metrics);//, tmp.getDynamicMethodCount(), tmp.getNewArrayCount(), tmp.getNewReferenceArrayCount(), tmp.getNewMultiDimensionalArrayCount(), tmp.getNewObjectCount());
+            Map<String, AttributeValue> item = newItem(futureId, metrics);//, tmp.getDynamicMethodCount(), tmp.getNewArrayCount(), tmp.getNewReferenceArrayCount(), tmp.getNewMultiDimensionalArrayCount(), tmp.getNewObjectCount());
 
             PutItemRequest putItemRequest = new PutItemRequest(tableName, item);
             PutItemResult putItemResult = dynamoDB.putItem(putItemRequest);
@@ -141,12 +141,12 @@ public class ServerMetrics {
         }
     }
     
-    private static Map<String, AttributeValue> newItem(int id, Long threadId, SolverMetrics metrics){//, Long threadId, String columns, String rows, String entries, int dynamicMethodCouter, int newArrayCount, int newReferenceArrayCount, int newMultiReferenceCount, int newObjectCount) {
+    private static Map<String, AttributeValue> newItem(int id, SolverMetrics metrics){//, Long threadId, String columns, String rows, String entries, int dynamicMethodCouter, int newArrayCount, int newReferenceArrayCount, int newMultiReferenceCount, int newObjectCount) {
         Map<String, AttributeValue> item = new HashMap<String, AttributeValue>();
         item.put("id", new AttributeValue(String.valueOf(id)));
-        item.put("Thread-id", new AttributeValue().withN(String.valueOf(threadId)));
         item.put("Columns", new AttributeValue().withN(String.valueOf(metrics.getnColumns())));
         item.put("Lines", new AttributeValue().withN(String.valueOf(metrics.getnLines())));
+        item.put("Solver-Type", new AttributeValue(String.valueOf(metrics.getSolver().toString())));
         item.put("Unassigned-Entries", new AttributeValue().withN(String.valueOf(metrics.getUnassignedEntries())));
         item.put("Method-counter", new AttributeValue().withN(String.valueOf(metrics.getDynamicMethodCount())));
         item.put("New-Array-counter", new AttributeValue().withN(String.valueOf(metrics.getNewArrayCount())));
