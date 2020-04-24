@@ -29,6 +29,7 @@ public class WebServer {
 
 
 		server.createContext("/sudoku", new MyHandler());
+		server.createContext("/health", new HealthCheckHandler());
 
 		// be aware! infinite pool of threads!
 		server.setExecutor(Executors.newCachedThreadPool());
@@ -128,4 +129,16 @@ public class WebServer {
 			System.out.println("> Sent response to " + t.getRemoteAddress().toString());
 		}
 	}
+
+	static class HealthCheckHandler implements HttpHandler {
+		@Override
+		public void handle(HttpExchange t) throws IOException {
+			String response = "OK";
+			t.sendResponseHeaders(200, response.length());
+			OutputStream os = t.getResponseBody();
+			os.write(response.getBytes());
+			os.close();
+		}
+	}
+
 }
