@@ -24,3 +24,10 @@ This script will:
 3. Run the web-server
 
 There is also a systemd service defined on the systemd folder that we are using on our AWS machines to run the server as a service.
+
+In this phase we are using a simple load balancer available at AWS that receives requests and selects one of the active
+web servers. The amount of web servers, in our case between 1 and 10, is managed by a simple auto-scaler, also available at AWS. 
+Regarding the scaling policies for the auto-scaler we decided to increase the number of instances by 1
+when the average CPU utilization is above 70% for 5 minutes and reduce the number of instances by 1
+when the average CPU utilization is under 30% for 5 minutes. Each instance, when starting, has a warmup
+time of 5 minutes as well.
