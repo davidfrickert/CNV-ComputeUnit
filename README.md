@@ -1,3 +1,10 @@
+This folder contains our extensions to the provided Sudoku Solver WebServer.
+Our additions are on src\pt\ulisboa\tecnico\cnv\instrument, some on the (...)\WebServer.java, and some scripts + Instrumentor.java on the root folder (src).
+We opted to bundle all dependencies on a folder for separation of code. Those are on lib folder. 
+- BIT.jar - BIT
+- org.jar - JSON and Apache Commons
+- aws-java-sdk-1.11.762.jar - AWS SDK
+
 To run the Sudoku Solver WebServer:
 
 Run the script run-server.sh in your linux environment (ideally AWS linux machine with only java 7, since this script doesn't check for which java version is being used).
