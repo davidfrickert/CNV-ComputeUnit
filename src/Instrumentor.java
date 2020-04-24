@@ -11,11 +11,6 @@ import java.util.List;
 public class Instrumentor {
 
     private static final String CLASS_NAME = Instrumentor.class.getName();
-    // dynamic
-    private int dynMethodCount = 0;
-
-    //static
-
 
     public static void main(String[] args) {
         if (args.length < 1) System.out.println("Usage: java Instrumentor <directory of .class files to instrument> <exclusions>");
